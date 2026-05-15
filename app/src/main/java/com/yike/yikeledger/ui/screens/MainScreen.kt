@@ -5,8 +5,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -210,7 +211,7 @@ enum class Tab(
     val title: String,
     val icon: ImageVector
 ) {
-    TRANSACTIONS("transactions", "流水", Icons.Default.List),
+    TRANSACTIONS("transactions", "流水", Icons.AutoMirrored.Filled.List),
     REPORTS("reports", "报表", Icons.Default.BarChart),
     SETTINGS("settings", "设置", Icons.Default.Settings)
 }

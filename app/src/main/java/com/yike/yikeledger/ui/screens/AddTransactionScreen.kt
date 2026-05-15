@@ -16,9 +16,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.TrendingUp
-import androidx.compose.material.icons.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Schedule
@@ -35,6 +35,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -157,7 +158,7 @@ fun AddTransactionScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            Icons.Default.ArrowBack, 
+                            Icons.AutoMirrored.Filled.ArrowBack, 
                             contentDescription = "返回",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
@@ -181,7 +182,7 @@ fun AddTransactionScreen(
                     // 收入状态：极淡红色背景
                     Brush.verticalGradient(
                         colors = listOf(
-                            MaterialTheme.colorScheme.error.copy(alpha = 0.08f),
+                            IncomeColor.copy(alpha = 0.08f),
                             MaterialTheme.colorScheme.surface
                         )
                     )
@@ -190,7 +191,7 @@ fun AddTransactionScreen(
                     // 支出状态：极淡绿色背景
                     Brush.verticalGradient(
                         colors = listOf(
-                            androidx.compose.ui.graphics.Color(0xFF4CAF50).copy(alpha = 0.08f),
+                            ExpenseColor.copy(alpha = 0.08f),
                             MaterialTheme.colorScheme.surface
                         )
                     )
@@ -198,14 +199,14 @@ fun AddTransactionScreen(
             }
 
             val cardBorderColor = when(selectedType) {
-                TransactionType.INCOME -> MaterialTheme.colorScheme.error.copy(alpha = 0.25f)
-                TransactionType.EXPENSE -> androidx.compose.ui.graphics.Color(0xFF4CAF50).copy(alpha = 0.25f)
+                TransactionType.INCOME -> IncomeColor.copy(alpha = 0.25f)
+                TransactionType.EXPENSE -> ExpenseColor.copy(alpha = 0.25f)
             }
 
             // 动态阴影颜色
             val shadowColor = when(selectedType) {
-                TransactionType.INCOME -> MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
-                TransactionType.EXPENSE -> androidx.compose.ui.graphics.Color(0xFF4CAF50).copy(alpha = 0.1f)
+                TransactionType.INCOME -> IncomeColor.copy(alpha = 0.1f)
+                TransactionType.EXPENSE -> ExpenseColor.copy(alpha = 0.1f)
             }
 
             Card(
@@ -217,8 +218,8 @@ fun AddTransactionScreen(
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
                         ambientColor = shadowColor,
                         spotColor = when(selectedType) {
-                            TransactionType.INCOME -> MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
-                            TransactionType.EXPENSE -> androidx.compose.ui.graphics.Color(0xFF4CAF50).copy(alpha = 0.15f)
+                            TransactionType.INCOME -> IncomeColor.copy(alpha = 0.15f)
+                            TransactionType.EXPENSE -> ExpenseColor.copy(alpha = 0.15f)
                         }
                     ),
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
@@ -309,7 +310,7 @@ fun AddTransactionScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                gradientStart = androidx.compose.ui.graphics.Color(0xFFE3F2FD),
+                gradientStart = MaterialTheme.colorScheme.primaryContainer,
                 gradientEnd = MaterialTheme.colorScheme.surface,
                 gradientAngle = 90f,
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
@@ -347,7 +348,7 @@ fun AddTransactionScreen(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .menuAnchor(),
+                                .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true),
                             label = { Text("分类") },
                             colors = androidx.compose.material3.TextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -451,7 +452,7 @@ fun AddTransactionScreen(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .menuAnchor(),
+                                .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true),
                             label = { Text("账户") },
                             colors = androidx.compose.material3.TextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -520,7 +521,7 @@ fun AddTransactionScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                gradientStart = androidx.compose.ui.graphics.Color(0xFFF3E5F5),
+                gradientStart = MaterialTheme.colorScheme.tertiaryContainer,
                 gradientEnd = MaterialTheme.colorScheme.surface,
                 gradientAngle = 270f,
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
@@ -638,7 +639,7 @@ fun AddTransactionScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .graphicsLayer { this.alpha = alpha },
-                        gradientStart = androidx.compose.ui.graphics.Color(0xFFFFEBEE),
+                        gradientStart = MaterialTheme.colorScheme.errorContainer,
                         gradientEnd = MaterialTheme.colorScheme.surface,
                         gradientAngle = 90f,
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
@@ -697,7 +698,7 @@ fun AddTransactionScreen(
                 // 提示信息卡片
                 GradientCard(
                     modifier = Modifier.fillMaxWidth(),
-                    gradientStart = androidx.compose.ui.graphics.Color(0xFFE8F5E8),
+                    gradientStart = MaterialTheme.colorScheme.secondaryContainer,
                     gradientEnd = MaterialTheme.colorScheme.surface,
                     gradientAngle = 90f,
                     shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),

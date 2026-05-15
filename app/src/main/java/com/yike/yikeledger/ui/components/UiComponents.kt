@@ -29,11 +29,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.TrendingUp
-import androidx.compose.material.icons.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -243,9 +243,9 @@ fun AmountDisplay(
     }
 
     val icon = when (type) {
-        "income" -> Icons.Filled.TrendingUp
-        "expense" -> Icons.Filled.TrendingDown
-        else -> if (amount >= 0) Icons.Filled.TrendingUp else Icons.Filled.TrendingDown
+        "income" -> Icons.AutoMirrored.Filled.TrendingUp
+        "expense" -> Icons.AutoMirrored.Filled.TrendingDown
+        else -> if (amount >= 0) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Filled.TrendingDown
     }
 
     Row(
@@ -317,9 +317,9 @@ fun ModernTransactionItem(
             ) {
                 Icon(
                     imageVector = when (type) {
-                        "income" -> Icons.Filled.TrendingUp
-                        "expense" -> Icons.Filled.TrendingDown
-                        else -> Icons.Filled.ArrowForward
+                        "income" -> Icons.AutoMirrored.Filled.TrendingUp
+                        "expense" -> Icons.AutoMirrored.Filled.TrendingDown
+                        else -> Icons.AutoMirrored.Filled.ArrowForward
                     },
                     contentDescription = type,
                     modifier = Modifier.size(20.dp),

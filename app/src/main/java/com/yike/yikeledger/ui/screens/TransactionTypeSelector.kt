@@ -19,8 +19,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.TrendingUp
-import androidx.compose.material.icons.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -92,10 +92,10 @@ private fun TransactionTypeCard(
     modifier: Modifier = Modifier
 ) {
     val isIncome = type == TransactionType.INCOME
-    val primaryColor = if (isIncome) MaterialTheme.colorScheme.error else androidx.compose.ui.graphics.Color(0xFF4CAF50)
+    val primaryColor = if (isIncome) IncomeColor else ExpenseColor
     val title = if (isIncome) "收入" else "支出"
     val subtitle = if (isIncome) "+ 增加余额" else "− 减少余额"
-    val icon = if (isIncome) Icons.Filled.TrendingUp else Icons.Filled.TrendingDown
+    val icon = if (isIncome) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Filled.TrendingDown
 
     // 增强动画状态 - 更流畅的动画
     val borderWidth by animateDpAsState(
@@ -148,12 +148,12 @@ private fun TransactionTypeCard(
         Brush.linearGradient(
             colors = if (isIncome) {
                 listOf(
-                    MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
+                    IncomeColor.copy(alpha = 0.12f),
                     MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                 )
             } else {
                 listOf(
-                    androidx.compose.ui.graphics.Color(0xFF4CAF50).copy(alpha = 0.12f),
+                    ExpenseColor.copy(alpha = 0.12f),
                     MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                 )
             },
@@ -176,13 +176,13 @@ private fun TransactionTypeCard(
         Brush.radialGradient(
             colors = if (isIncome) {
                 listOf(
-                    MaterialTheme.colorScheme.error.copy(alpha = 0.3f),  // 中心红色
+                    IncomeColor.copy(alpha = 0.3f),  // 中心绿色（收入）
                     Color(0xFF2196F3).copy(alpha = 0.15f),  // 中间蓝色
                     Color(0xFFE3F2FD).copy(alpha = 0.05f)   // 边缘浅色
                 )
             } else {
                 listOf(
-                    androidx.compose.ui.graphics.Color(0xFF4CAF50).copy(alpha = 0.3f),  // 中心绿色
+                    ExpenseColor.copy(alpha = 0.3f),  // 中心红色（支出）
                     Color(0xFF9C27B0).copy(alpha = 0.15f),  // 中间紫色
                     Color(0xFFFCE4EC).copy(alpha = 0.05f)   // 边缘浅色
                 )

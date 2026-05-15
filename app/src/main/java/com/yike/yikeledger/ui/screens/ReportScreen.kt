@@ -311,9 +311,14 @@ fun ReportScreen(viewModel: TransactionViewModel = viewModel()) {
 
             // 汇总卡片 - 使用渐变卡片
             item {
-                val totalIncome = stats.sumOf { it.income }
-                val totalExpense = stats.sumOf { it.expense }
-                val net = totalIncome - totalExpense
+                val summary = remember(stats) {
+                    val income = stats.sumOf { it.income }
+                    val expense = stats.sumOf { it.expense }
+                    ReportSummary(income, expense, income - expense)
+                }
+                val totalIncome = summary.totalIncome
+                val totalExpense = summary.totalExpense
+                val net = summary.net
 
                 GradientCard(
                     modifier = Modifier.fillMaxWidth(),
@@ -826,6 +831,12 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
         }
     }
 }
+
+private data class ReportSummary(
+    val totalIncome: Double,
+    val totalExpense: Double,
+    val net: Double
+)
 
 private fun formatCurrency(value: Double): String {
     return try {

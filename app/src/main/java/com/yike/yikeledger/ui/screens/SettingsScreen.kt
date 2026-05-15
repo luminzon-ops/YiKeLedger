@@ -42,6 +42,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -142,7 +143,7 @@ fun SettingsItemCard(
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = "进入",
-                tint = MaterialTheme.colorScheme.outline
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         } // 闭合外层Row
     } // 闭合Card
@@ -279,7 +280,7 @@ fun SettingsInfoCard(
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
                     contentDescription = "进入",
-                    tint = MaterialTheme.colorScheme.outline
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -301,7 +302,7 @@ fun SettingsScreen(
     // 状态变量
     val notificationsEnabled = remember { mutableStateOf(true) }
     val backupEnabled = remember { mutableStateOf(false) }
-    var showThemeDialog by remember { mutableStateOfAlias(false) }
+    var showThemeDialog by remember { mutableStateOf(false) }
 
     Box {
         Scaffold(
@@ -492,7 +493,7 @@ fun SettingsScreen(
                                     )
                                 }
                             }
-                            Divider(modifier = Modifier.padding(horizontal = 4.dp))
+                            HorizontalDivider(modifier = Modifier.padding(horizontal = 4.dp))
                         }
                     }
                 },

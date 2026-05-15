@@ -19,13 +19,14 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.TrendingUp
-import androidx.compose.material.icons.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +38,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -91,13 +93,19 @@ fun TransactionListScreen(
     val isLoading = false // 这里可以根据实际需要添加加载状态
     
     // 计算统计数据
-    val totalIncome = transactions.filter { it.type == TransactionType.INCOME }
-        .sumOf { it.amount }
-    val totalExpense = transactions.filter { it.type == TransactionType.EXPENSE }
-        .sumOf { it.amount }
-    
-    val totalCount = transactions.size
-    val averageAmount = if (totalCount > 0) (totalIncome + totalExpense) / totalCount else 0.0
+    val summary = remember(transactions) {
+        val income = transactions.filter { it.type == TransactionType.INCOME }
+            .sumOf { it.amount }
+        val expense = transactions.filter { it.type == TransactionType.EXPENSE }
+            .sumOf { it.amount }
+        val count = transactions.size
+        val average = if (count > 0) (income + expense) / count else 0.0
+        TransactionSummary(income, expense, count, average)
+    }
+    val totalIncome = summary.totalIncome
+    val totalExpense = summary.totalExpense
+    val totalCount = summary.totalCount
+    val averageAmount = summary.averageAmount
     
     Scaffold(
         topBar = {
@@ -231,7 +239,7 @@ fun TransactionListScreen(
                         value = "¥${String.format("%.2f", totalIncome)}",
                         description = "累计收入",
                         valueColor = IncomeColor,
-                        icon = Icons.Default.TrendingUp,
+                        icon = Icons.AutoMirrored.Filled.TrendingUp,
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
                         elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 6.dp),
                         backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
@@ -246,7 +254,7 @@ fun TransactionListScreen(
                         value = "¥${String.format("%.2f", totalExpense)}",
                         description = "累计支出",
                         valueColor = ExpenseColor,
-                        icon = Icons.Default.TrendingDown,
+                        icon = Icons.AutoMirrored.Filled.TrendingDown,
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
                         elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 6.dp),
                         backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
@@ -323,7 +331,7 @@ fun TransactionListScreen(
                     }
 
                     // 分割线
-                    androidx.compose.material3.Divider(
+                    androidx.compose.material3.HorizontalDivider(
                         color = androidx.compose.material3.MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
                         thickness = 1.dp,
                         modifier = Modifier.fillMaxWidth()
@@ -336,7 +344,7 @@ fun TransactionListScreen(
                     EnhancedEmptyState(
                         title = "暂无交易记录",
                         description = "开始记录你的第一笔交易，跟踪个人财务状况",
-                        icon = Icons.Default.ArrowForward,
+                        icon = Icons.AutoMirrored.Filled.ArrowForward,
                         actionText = "添加交易",
                         onAction = onAddClick,
                         modifier = Modifier.fillMaxWidth()
@@ -351,9 +359,6 @@ fun TransactionListScreen(
                         index = index,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .animateItemPlacement(
-                                animationSpec = tween(durationMillis = 300, delayMillis = index.coerceAtMost(6) * 30)
-                            )
                     ) {
                         ModernTransactionItem(
                             title = transaction.description,
@@ -370,5 +375,12 @@ fun TransactionListScreen(
         }
     }
 }
+
 }
 
+private data class TransactionSummary(
+    val totalIncome: Double,
+    val totalExpense: Double,
+    val totalCount: Int,
+    val averageAmount: Double
+)

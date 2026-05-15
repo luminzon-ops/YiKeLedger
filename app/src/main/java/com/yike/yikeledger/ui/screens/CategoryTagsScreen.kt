@@ -16,10 +16,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.TrendingDown
-import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,7 +50,7 @@ fun CategoryTagsScreen(
                 title = { Text("分类标签", style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "返回")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
                     }
                 }
             )
@@ -72,7 +72,7 @@ fun CategoryTagsScreen(
             CategoryTagItemCard(
                 title = "支出分类",
                 description = "管理支出分类",
-                icon = Icons.Default.TrendingDown,
+                icon = Icons.AutoMirrored.Filled.TrendingDown,
                 iconColor = MaterialTheme.colorScheme.error,
                 onClick = {
                     navController.navigate("expense_categories")
@@ -83,7 +83,7 @@ fun CategoryTagsScreen(
             CategoryTagItemCard(
                 title = "收入分类",
                 description = "管理收入分类",
-                icon = Icons.Default.TrendingUp,
+                icon = Icons.AutoMirrored.Filled.TrendingUp,
                 iconColor = MaterialTheme.colorScheme.primary,
                 onClick = {
                     navController.navigate("income_categories")
@@ -162,7 +162,7 @@ fun CategoryTagItemCard(
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = "进入",
-                tint = MaterialTheme.colorScheme.outline
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
