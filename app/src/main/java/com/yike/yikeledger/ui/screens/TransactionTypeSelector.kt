@@ -177,14 +177,14 @@ private fun TransactionTypeCard(
             colors = if (isIncome) {
                 listOf(
                     IncomeColor.copy(alpha = 0.3f),  // 中心绿色（收入）
-                    Color(0xFF2196F3).copy(alpha = 0.15f),  // 中间蓝色
-                    Color(0xFFE3F2FD).copy(alpha = 0.05f)   // 边缘浅色
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.15f),
+                    MaterialTheme.colorScheme.surface.copy(alpha = 0.05f)
                 )
             } else {
                 listOf(
                     ExpenseColor.copy(alpha = 0.3f),  // 中心红色（支出）
-                    Color(0xFF9C27B0).copy(alpha = 0.15f),  // 中间紫色
-                    Color(0xFFFCE4EC).copy(alpha = 0.05f)   // 边缘浅色
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.15f),
+                    MaterialTheme.colorScheme.surface.copy(alpha = 0.05f)
                 )
             },
             center = androidx.compose.ui.geometry.Offset(0.5f, 0.5f),

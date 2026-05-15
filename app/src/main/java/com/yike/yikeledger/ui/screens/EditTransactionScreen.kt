@@ -1,6 +1,7 @@
 package com.yike.yikeledger.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,14 +37,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.yike.yikeledger.R
 import com.yike.yikeledger.data.Category
 import com.yike.yikeledger.data.TransactionType
+import com.yike.yikeledger.ui.components.LottieStateAnimation
 import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -86,6 +91,9 @@ fun EditTransactionScreen(
     // 日期时间编辑状态
     var dateTimeText by remember { mutableStateOf(originalDateTime) }
 
+    var showSuccess by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
     // 当交易数据加载时更新表单
     LaunchedEffect(transactionToEdit) {
         transactionToEdit?.let {
@@ -99,6 +107,7 @@ fun EditTransactionScreen(
         }
     }
 
+    Box(modifier = Modifier.fillMaxSize()) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -282,9 +291,12 @@ fun EditTransactionScreen(
                     if (description.isNotBlank() && amountText.isNotBlank()) {
                         val amount = amountText.toDoubleOrNull() ?: 0.0
                         if (amount > 0 && transactionId != null) {
-                            // 使用更新交易方法，保留原时间
                             viewModel.updateTransaction(transactionId, description, selectedType, selectedCategory, amount, selectedAccountId, dateTimeText)
-                            onBack()
+                            showSuccess = true
+                            scope.launch {
+                                kotlinx.coroutines.delay(800)
+                                onBack()
+                            }
                         }
                     }
                 },
@@ -303,6 +315,20 @@ fun EditTransactionScreen(
                 Text("• 支出金额自动记为负数", style = MaterialTheme.typography.bodySmall)
                 Text("• 收入金额自动记为正数", style = MaterialTheme.typography.bodySmall)
                 Text("• 余额 = 收入 - 支出", style = MaterialTheme.typography.bodySmall)
+            }
+        }
+    }
+
+        if (showSuccess) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                LottieStateAnimation(
+                    animationRes = R.raw.success_check,
+                    iterations = 1,
+                    size = 160.dp
+                )
             }
         }
     }
