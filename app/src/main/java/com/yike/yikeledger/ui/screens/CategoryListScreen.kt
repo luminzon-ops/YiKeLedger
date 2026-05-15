@@ -51,7 +51,8 @@ import com.yike.yikeledger.data.TransactionType
 import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
 import com.yike.yikeledger.ui.components.GradientCard
 import com.yike.yikeledger.ui.components.ModernFloatingActionButton
-import com.yike.yikeledger.ui.components.EmptyState
+import com.yike.yikeledger.ui.components.EnhancedEmptyState
+import com.yike.yikeledger.ui.components.StaggeredListItem
 import com.yike.yikeledger.ui.components.CategoryCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,11 +94,14 @@ fun CategoryListScreen(
         }
     ) { innerPadding ->
         if (categories.isEmpty()) {
-            EmptyState(
+            EnhancedEmptyState(
                 title = "暂无分类",
-                description = "点击右下角按钮添加第一个分类"
+                description = "点击右下角按钮添加第一个分类",
+                icon = Icons.Default.Add
             )
         } else {
+            val incomeCategories = remember(categories) { categories.filter { it.type == TransactionType.INCOME } }
+            val expenseCategories = remember(categories) { categories.filter { it.type == TransactionType.EXPENSE } }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -111,7 +115,6 @@ fun CategoryListScreen(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 // 收入分类部分
-                val incomeCategories = categories.filter { it.type == TransactionType.INCOME }
                 if (incomeCategories.isNotEmpty()) {
                     item {
                         Text(
@@ -121,17 +124,18 @@ fun CategoryListScreen(
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
                     }
-                    items(incomeCategories) { category ->
-                        CategoryCard(
-                            name = category.name,
-                            type = category.type,
-                            onClick = { onEditCategory(category.id) }
-                        )
+                    items(incomeCategories.size) { index ->
+                        StaggeredListItem(index = index) {
+                            CategoryCard(
+                                name = incomeCategories[index].name,
+                                type = incomeCategories[index].type,
+                                onClick = { onEditCategory(incomeCategories[index].id) }
+                            )
+                        }
                     }
                 }
 
                 // 支出分类部分
-                val expenseCategories = categories.filter { it.type == TransactionType.EXPENSE }
                 if (expenseCategories.isNotEmpty()) {
                     item {
                         Text(
@@ -141,12 +145,14 @@ fun CategoryListScreen(
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
                     }
-                    items(expenseCategories) { category ->
-                        CategoryCard(
-                            name = category.name,
-                            type = category.type,
-                            onClick = { onEditCategory(category.id) }
-                        )
+                    items(expenseCategories.size) { index ->
+                        StaggeredListItem(index = index) {
+                            CategoryCard(
+                                name = expenseCategories[index].name,
+                                type = expenseCategories[index].type,
+                                onClick = { onEditCategory(expenseCategories[index].id) }
+                            )
+                        }
                     }
                 }
             }

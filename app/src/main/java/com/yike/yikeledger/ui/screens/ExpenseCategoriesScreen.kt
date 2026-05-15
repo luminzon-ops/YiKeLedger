@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +44,8 @@ import androidx.navigation.NavController
 import com.yike.yikeledger.data.TransactionType
 import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
 import com.yike.yikeledger.ui.components.ModernFloatingActionButton
-import com.yike.yikeledger.ui.components.EmptyState
+import com.yike.yikeledger.ui.components.EnhancedEmptyState
+import com.yike.yikeledger.ui.components.StaggeredListItem
 import com.yike.yikeledger.ui.components.CategoryCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +61,9 @@ fun ExpenseCategoriesScreen(
         viewModel.loadCategories()
     }
 
-    val expenseCategories = categories.filter { it.type == TransactionType.EXPENSE }
+    val expenseCategories = remember(categories) {
+        categories.filter { it.type == TransactionType.EXPENSE }
+    }
 
     Scaffold(
         topBar = {
@@ -95,9 +99,10 @@ fun ExpenseCategoriesScreen(
         }
     ) { innerPadding ->
         if (expenseCategories.isEmpty()) {
-            EmptyState(
+            EnhancedEmptyState(
                 title = "暂无支出分类",
                 description = "点击右下角按钮添加第一个支出分类",
+                icon = Icons.Default.Add,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
@@ -120,14 +125,17 @@ fun ExpenseCategoriesScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                items(expenseCategories) { category ->
-                    CategoryCard(
-                        name = category.name,
-                        type = category.type,
-                        onClick = {
-                            navController.navigate("edit_category/${category.id}")
-                        }
-                    )
+                items(expenseCategories.size) { index ->
+                    val category = expenseCategories[index]
+                    StaggeredListItem(index = index) {
+                        CategoryCard(
+                            name = category.name,
+                            type = category.type,
+                            onClick = {
+                                navController.navigate("edit_category/${category.id}")
+                            }
+                        )
+                    }
                 }
             }
         }

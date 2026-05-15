@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +46,9 @@ import androidx.navigation.NavController
 import com.yike.yikeledger.data.AccountType
 import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
 import com.yike.yikeledger.ui.components.GradientCard
+import com.yike.yikeledger.ui.components.EnhancedEmptyState
+import com.yike.yikeledger.ui.components.StaggeredListItem
+import com.yike.yikeledger.ui.components.FadeScaleInContent
 import com.yike.yikeledger.ui.components.AccountCard
 import com.yike.yikeledger.ui.components.ModernFloatingActionButton
 import com.yike.yikeledger.ui.components.EmptyState
@@ -112,32 +116,34 @@ fun AccountListScreen(
         ) {
             // 总余额卡片 - 使用渐变卡片
             item {
-                val totalBalance = accounts.sumOf { it.currentBalance }
-                GradientCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    gradientStart = PrimaryGradientStart,
-                    gradientEnd = PrimaryGradientEnd
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                val totalBalance = remember(accounts) { accounts.sumOf { it.currentBalance } }
+                FadeScaleInContent {
+                    GradientCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        gradientStart = PrimaryGradientStart,
+                        gradientEnd = PrimaryGradientEnd
                     ) {
-                        Text(
-                            text = "当前总余额",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.White.copy(alpha = 0.9f)
-                        )
-                        Text(
-                            text = "¥${String.format("%.2f", totalBalance)}",
-                            style = AmountTypography.displayMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "${accounts.size}个账户",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = "当前总余额",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.White.copy(alpha = 0.9f)
+                            )
+                            Text(
+                                text = "¥${String.format("%.2f", totalBalance)}",
+                                style = AmountTypography.displayMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                text = "${accounts.size}个账户",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.8f)
+                            )
+                        }
                     }
                 }
             }
@@ -152,21 +158,24 @@ fun AccountListScreen(
 
             if (accounts.isEmpty()) {
                 item {
-                    EmptyState(
+                    EnhancedEmptyState(
                         title = "暂无账户",
                         description = "点击右下角按钮添加你的第一个账户",
                         icon = Icons.Default.Add
                     )
                 }
             } else {
-                items(accounts) { account ->
-                    AccountCard(
+                items(accounts.size) { index ->
+                    val account = accounts[index]
+                    StaggeredListItem(index = index) {
+                        AccountCard(
                         name = account.name,
                         balance = account.currentBalance.toDouble(),
                         type = getAccountTypeName(account.type),
                         color = account.color.toLong(),
                         onClick = { onEditAccount(account.id) }
                     )
+                    }
                 }
             }
         }
