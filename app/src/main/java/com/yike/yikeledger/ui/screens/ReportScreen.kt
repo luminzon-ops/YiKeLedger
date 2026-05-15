@@ -1,6 +1,7 @@
 package com.yike.yikeledger.ui.screens
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.animation.animateContentSize
 import androidx.compose.ui.draw.clip
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -29,6 +32,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import android.graphics.Paint as AndroidPaint
 import android.graphics.Color as AndroidColor
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -65,7 +69,9 @@ import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
 import com.yike.yikeledger.ui.components.GradientCard
 import com.yike.yikeledger.ui.components.StatCard
 import com.yike.yikeledger.ui.components.ModernTransactionItem
-import com.yike.yikeledger.ui.components.EmptyState
+import com.yike.yikeledger.ui.components.EnhancedEmptyState
+import com.yike.yikeledger.ui.components.StaggeredListItem
+import com.yike.yikeledger.ui.components.FadeScaleInContent
 import com.yike.yikeledger.ui.components.ProgressIndicator
 import com.yike.yikeledger.ui.theme.AmountTypography
 import com.yike.yikeledger.ui.theme.PrimaryGradientStart
@@ -186,7 +192,7 @@ fun ReportScreen(viewModel: TransactionViewModel = viewModel()) {
                                 Text(
                                     text = "选择特定时间段进行分析",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.outline
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                             Switch(
@@ -402,31 +408,37 @@ fun ReportScreen(viewModel: TransactionViewModel = viewModel()) {
                 }
             }
 
-            // 柱状图
+            // 趋势图
             if (stats.isNotEmpty()) {
                 item {
-                    Card(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                    FadeScaleInContent {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(20.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.12f))
                         ) {
-                            Text(
-                                when (selectedChart) {
-                                    ChartType.INCOME -> "收入趋势图"
-                                    ChartType.EXPENSE -> "支出趋势图"
-                                    ChartType.NET -> "净额趋势图"
-                                },
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(12.dp))
-                            LineChart(
-                                stats = stats.takeLast(10),
-                                period = selectedPeriod,
-                                chartType = selectedChart
-                            )
+                            Column(
+                                modifier = Modifier.padding(20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    when (selectedChart) {
+                                        ChartType.INCOME -> "收入趋势图"
+                                        ChartType.EXPENSE -> "支出趋势图"
+                                        ChartType.NET -> "净额趋势图"
+                                    },
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                LineChart(
+                                    stats = stats.takeLast(10),
+                                    period = selectedPeriod,
+                                    chartType = selectedChart
+                                )
+                            }
                         }
                     }
                 }
@@ -439,23 +451,22 @@ fun ReportScreen(viewModel: TransactionViewModel = viewModel()) {
 
             if (stats.isEmpty()) {
                 item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("暂无统计数据", fontSize = 18.sp)
-                            Text("尝试添加一些交易记录", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
-                        }
-                    }
+                    EnhancedEmptyState(
+                        title = "暂无统计数据",
+                        description = "添加一些交易记录后，这里将展示详细的统计图表",
+                        icon = Icons.Default.BarChart,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             } else {
-                items(stats.reversed()) { stat -> // 最新的在前
-                    StatItem(stat = stat, period = selectedPeriod)
+                items(stats.reversed().size) { index ->
+                    val stat = stats.reversed()[index]
+                    StaggeredListItem(
+                        index = index,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        StatItem(stat = stat, period = selectedPeriod)
+                    }
                 }
             }
         }
@@ -467,10 +478,13 @@ fun StatItem(stat: PeriodStat, period: StatPeriod) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(vertical = 4.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.15f))
     ) {
         Column(
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Row {
                 Text(
@@ -493,7 +507,7 @@ fun StatItem(stat: PeriodStat, period: StatPeriod) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
-                    Text("收入", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
+                    Text("收入", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
                         formatCurrency(stat.income),
                         fontSize = 16.sp,
@@ -501,7 +515,7 @@ fun StatItem(stat: PeriodStat, period: StatPeriod) {
                     )
                 }
                 Column {
-                    Text("支出", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
+                    Text("支出", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
                         formatCurrency(stat.expense),
                         fontSize = 16.sp,
@@ -559,9 +573,9 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
     }
     
     val lineColor = when (chartType) {
-        ChartType.INCOME -> Color(0xFFF44336) // 红色
-        ChartType.EXPENSE -> Color(0xFF4CAF50) // 绿色
-        ChartType.NET -> Color(0xFF2196F3) // 蓝色
+        ChartType.INCOME -> IncomeColor
+        ChartType.EXPENSE -> ExpenseColor
+        ChartType.NET -> InfoBlue
     }
     
     val maxValue = data.maxOrNull() ?: 1.0
@@ -598,20 +612,23 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
                 Text(
                     formatCurrencyNoDecimal(maxDisplay),
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     formatCurrencyNoDecimal(maxDisplay / 2),
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     "0",
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             
+            val axisColor = MaterialTheme.colorScheme.onSurfaceVariant
+            val gridColor = MaterialTheme.colorScheme.outline
+
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
@@ -621,7 +638,7 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
                             val canvasWidth = size.width - leftPadding.toPx() - chartPadding.toPx()
                             val startX = leftPadding.toPx()
                             val pointWidth = canvasWidth / (displayStats.size - 1).coerceAtLeast(1)
-                            
+
                             val relativeX = tapOffset.x - startX
                             val clickedIndex = (relativeX / pointWidth).toInt().coerceIn(0, displayStats.size - 1)
                             selectedIndex = clickedIndex
@@ -632,17 +649,17 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
                 val canvasHeight = size.height - chartPadding.toPx() * 2
                 val startX = leftPadding.toPx()
                 val startY = chartPadding.toPx()
-                
+
                 // 绘制坐标轴
                 drawLine(
-                    color = Color.Gray,
+                    color = axisColor,
                     start = Offset(startX, startY + canvasHeight),
                     end = Offset(startX + canvasWidth, startY + canvasHeight),
                     strokeWidth = 2f
                 )
-                
+
                 drawLine(
-                    color = Color.Gray,
+                    color = axisColor,
                     start = Offset(startX, startY),
                     end = Offset(startX, startY + canvasHeight),
                     strokeWidth = 2f
@@ -652,7 +669,7 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
                 val dashPattern = floatArrayOf(10f, 5f)
                 // y = maxValue (顶部)
                 drawLine(
-                    color = Color(0xFFCCCCCC),
+                    color = gridColor,
                     start = Offset(startX, startY),
                     end = Offset(startX + canvasWidth, startY),
                     strokeWidth = 1f,
@@ -660,7 +677,7 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
                 )
                 // y = maxValue / 2 (中间)
                 drawLine(
-                    color = Color(0xFFCCCCCC),
+                    color = gridColor,
                     start = Offset(startX, startY + canvasHeight / 2),
                     end = Offset(startX + canvasWidth, startY + canvasHeight / 2),
                     strokeWidth = 1f,
@@ -668,7 +685,7 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
                 )
                 // y = 0 (底部，与X轴重合，可以不单独绘制)
                 // drawLine(
-                //     color = Color(0xFFCCCCCC),
+                //     color = MaterialTheme.colorScheme.outline,
                 //     start = Offset(startX, startY + canvasHeight),
                 //     end = Offset(startX + canvasWidth, startY + canvasHeight),
                 //     strokeWidth = 1f,
@@ -760,7 +777,7 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
                     Text(
                         formatPeriodDisplay(displayStats.first().period, period),
                         fontSize = 12.sp,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1
                     )
                 }
@@ -768,7 +785,7 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
                     Text(
                         formatPeriodDisplay(displayStats[displayStats.size / 2].period, period),
                         fontSize = 12.sp,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1
                     )
                 }
@@ -776,7 +793,7 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
                     Text(
                         formatPeriodDisplay(displayStats.last().period, period),
                         fontSize = 12.sp,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1
                     )
                 }
@@ -804,7 +821,7 @@ fun LineChart(stats: List<PeriodStat>, period: StatPeriod, chartType: ChartType)
                     ChartType.NET -> "净额"
                 },
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

@@ -108,7 +108,7 @@ fun EditAccountScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("账户类型", color = MaterialTheme.colorScheme.outline)
+                            Text("账户类型", color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(
                                 getAccountTypeName(account.type),
                                 fontWeight = MaterialTheme.typography.bodyLarge.fontWeight
@@ -122,7 +122,7 @@ fun EditAccountScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("当前余额", color = MaterialTheme.colorScheme.outline)
+                            Text("当前余额", color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(
                                 "¥${String.format("%.2f", account.currentBalance)}",
                                 fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
@@ -140,7 +140,7 @@ fun EditAccountScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("创建时间", color = MaterialTheme.colorScheme.outline)
+                            Text("创建时间", color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(account.createdAt)
                         }
                     }

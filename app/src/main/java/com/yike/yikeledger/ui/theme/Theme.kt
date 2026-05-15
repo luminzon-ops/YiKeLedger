@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.yike.yikeledger.data.ThemeSetting
 
@@ -44,8 +45,8 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = Neutral10,
     onBackground = Neutral90,
     onSurface = Neutral80,
-    onSurfaceVariant = Neutral60,
-    outline = BorderLight,
+    onSurfaceVariant = Color(0xFF495057),   // 原 Neutral60 太浅，改为更深的灰确保可读性
+    outline = Color(0xFFADB5BD),            // 原 BorderLight 太浅，改为可见的边框色
     error = ErrorRed,
     primaryContainer = OceanBlue40.copy(alpha = 0.12f),
     secondaryContainer = TealGreen40.copy(alpha = 0.12f),

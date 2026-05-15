@@ -60,7 +60,7 @@ fun ProjectManagementScreen(
             Text(
                 text = "功能开发中...",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.outline,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
