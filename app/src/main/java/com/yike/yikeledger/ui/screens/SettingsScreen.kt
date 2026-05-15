@@ -440,7 +440,7 @@ fun SettingsScreen(
                     title = "版本信息",
                     description = "查看应用版本和更新",
                     icon = Icons.Default.Info,
-                    value = "v1.0.1Test",
+                    value = "v0.1.0",
                     onClick = { /* 显示版本信息 */ }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
