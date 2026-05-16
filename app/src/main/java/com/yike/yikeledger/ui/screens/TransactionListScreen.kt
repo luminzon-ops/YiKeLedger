@@ -88,7 +88,9 @@ fun TransactionListScreen(
     val transactions = viewModel.transactions.collectAsState().value
     val balance = viewModel.balance.collectAsState().value
     val fabPosition = remember { mutableStateOf(Offset.Zero) }
-    
+    val topAddPosition = remember { mutableStateOf(Offset.Zero) }
+    val emptyAddPosition = remember { mutableStateOf(Offset.Zero) }
+
     // 监听数据变化，实时刷新
     LaunchedEffect(Unit) {
         viewModel.loadTransactions()
@@ -128,9 +130,14 @@ fun TransactionListScreen(
                 ),
                 actions = {
                     IconButton(
-                        onClick = { onAddClick(Offset.Zero) },
+                        onClick = { onAddClick(topAddPosition.value) },
                         modifier = Modifier
-                            .clip(androidx.compose.foundation.shape.CircleShape),
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .onGloballyPositioned { coord ->
+                                val rootPos = coord.localToRoot(Offset.Zero)
+                                val size = coord.size
+                                topAddPosition.value = Offset(rootPos.x + size.width / 2f, rootPos.y + size.height / 2f)
+                            },
                         enabled = !isLoading
                     ) {
                         Icon(
@@ -355,8 +362,14 @@ fun TransactionListScreen(
                         description = "开始记录你的第一笔交易，跟踪个人财务状况",
                         icon = Icons.AutoMirrored.Filled.ArrowForward,
                         actionText = "添加交易",
-                        onAction = { onAddClick(Offset.Zero) },
-                        modifier = Modifier.fillMaxWidth()
+                        onAction = { onAddClick(emptyAddPosition.value) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onGloballyPositioned { coord ->
+                                val rootPos = coord.localToRoot(Offset.Zero)
+                                val size = coord.size
+                                emptyAddPosition.value = Offset(rootPos.x + size.width / 2f, rootPos.y + size.height / 2f)
+                            }
                     )
                 }
             } else {
