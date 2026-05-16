@@ -166,6 +166,15 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
 
 
 
+    fun exportTransactionsAsCsv(): String {
+        val sb = StringBuilder("描述,类型,分类,金额,账户ID,日期时间\n")
+        _transactions.value.forEach { t ->
+            val type = if (t.type == TransactionType.INCOME) "收入" else "支出"
+            sb.append("${t.description},$type,${t.category},${"%.2f".format(t.amount)},${t.accountId},${t.dateTime}\n")
+        }
+        return sb.toString()
+    }
+
     private fun updateBalance(transactions: List<Transaction>) {
         _balance.value = transactions.sumOf { it.signedAmount() }
     }

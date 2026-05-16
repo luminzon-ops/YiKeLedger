@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.yike.yikeledger.data.AppSettingsManager
 import com.yike.yikeledger.data.TransactionType
 import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
 import com.yike.yikeledger.ui.components.LoadingState
@@ -218,7 +219,7 @@ fun TransactionListScreen(
                             color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.95f)
                         )
                         androidx.compose.material3.Text(
-                            text = "¥${String.format("%.2f", balance)}",
+                            text = AppSettingsManager.formatAmount(balance),
                             style = AmountTypography.displayLarge,
                             fontWeight = FontWeight.ExtraBold,
                             color = androidx.compose.ui.graphics.Color.White,
@@ -252,7 +253,7 @@ fun TransactionListScreen(
                     StatCard(
                         modifier = Modifier.weight(1f),
                         title = "总收入",
-                        value = "¥${String.format("%.2f", totalIncome)}",
+                        value = AppSettingsManager.formatAmount(totalIncome),
                         description = "累计收入",
                         valueColor = IncomeColor,
                         icon = Icons.AutoMirrored.Filled.TrendingUp,
@@ -267,7 +268,7 @@ fun TransactionListScreen(
                     StatCard(
                         modifier = Modifier.weight(1f),
                         title = "总支出",
-                        value = "¥${String.format("%.2f", totalExpense)}",
+                        value = AppSettingsManager.formatAmount(totalExpense),
                         description = "累计支出",
                         valueColor = ExpenseColor,
                         icon = Icons.AutoMirrored.Filled.TrendingDown,
@@ -305,7 +306,7 @@ fun TransactionListScreen(
                     StatCard(
                         modifier = Modifier.weight(1f),
                         title = "平均金额",
-                        value = "¥${String.format("%.2f", averageAmount)}",
+                        value = AppSettingsManager.formatAmount(averageAmount),
                         description = "每笔交易",
                         valueColor = ChartColor4,
                         icon = null,

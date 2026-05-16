@@ -88,6 +88,7 @@ import com.yike.yikeledger.ui.theme.SecondaryGradientStart
 import com.yike.yikeledger.ui.theme.SecondaryGradientEnd
 import com.yike.yikeledger.ui.theme.SuccessGreen
 import com.yike.yikeledger.ui.theme.ErrorRed
+import com.yike.yikeledger.data.AppSettingsManager
 import com.yike.yikeledger.data.TransactionType
 import com.yike.yikeledger.R
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -226,7 +227,7 @@ fun AmountDisplay(
     fontSize: Int = 20
 ) {
     val amountText = if (showSymbol) {
-        "¥${String.format("%.2f", amount)}"
+        AppSettingsManager.formatAmount(amount)
     } else {
         String.format("%.2f", amount)
     }
@@ -443,7 +444,7 @@ fun AccountCard(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = "¥${String.format("%.2f", balance)}",
+                    text = AppSettingsManager.formatAmount(balance),
                     style = AmountTypography.displaySmall,
                     fontWeight = FontWeight.Bold,
                     color = if (balance >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error

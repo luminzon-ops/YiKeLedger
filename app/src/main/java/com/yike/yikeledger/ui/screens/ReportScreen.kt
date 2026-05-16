@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.yike.yikeledger.data.AppSettingsManager
 import com.yike.yikeledger.data.PeriodStat
 import com.yike.yikeledger.data.StatPeriod
 import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
@@ -843,7 +844,7 @@ private fun formatCurrency(value: Double): String {
         if (value.isNaN() || value.isInfinite()) {
             "¥0.00"
         } else {
-            "¥${String.format("%.2f", value)}"
+            AppSettingsManager.formatAmount(value)
         }
     } catch (e: Exception) {
         "¥0.00"

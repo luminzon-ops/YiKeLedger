@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
+import com.yike.yikeledger.data.AppSettingsManager
 import com.yike.yikeledger.data.AccountType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,7 +125,7 @@ fun EditAccountScreen(
                         ) {
                             Text("当前余额", color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(
-                                "¥${String.format("%.2f", account.currentBalance)}",
+                                AppSettingsManager.formatAmount(account.currentBalance),
                                 fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
                                 color = if (account.currentBalance >= 0) 
                                     MaterialTheme.colorScheme.primary 

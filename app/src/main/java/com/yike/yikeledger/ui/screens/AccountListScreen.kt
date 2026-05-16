@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.yike.yikeledger.data.AppSettingsManager
 import com.yike.yikeledger.data.AccountType
 import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
 import com.yike.yikeledger.ui.components.GradientCard
@@ -133,7 +134,7 @@ fun AccountListScreen(
                                 color = Color.White.copy(alpha = 0.9f)
                             )
                             Text(
-                                text = "¥${String.format("%.2f", totalBalance)}",
+                                text = AppSettingsManager.formatAmount(totalBalance),
                                 style = AmountTypography.displayMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
