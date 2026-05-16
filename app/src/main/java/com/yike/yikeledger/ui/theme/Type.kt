@@ -262,3 +262,21 @@ val AccessibleCaption = TextStyle(
     lineHeight = 21.sp, // 1.5行高
     letterSpacing = 0.25.sp
 )
+
+fun scaledTypography(scale: Float): Typography = Typography.copy(
+    displayLarge = Typography.displayLarge.copy(fontSize = (40 * scale).sp, lineHeight = (48 * scale).sp),
+    displayMedium = Typography.displayMedium.copy(fontSize = (32 * scale).sp, lineHeight = (40 * scale).sp),
+    displaySmall = Typography.displaySmall.copy(fontSize = (24 * scale).sp, lineHeight = (32 * scale).sp),
+    headlineLarge = Typography.headlineLarge.copy(fontSize = (32 * scale).sp, lineHeight = (40 * scale).sp),
+    headlineMedium = Typography.headlineMedium.copy(fontSize = (28 * scale).sp, lineHeight = (36 * scale).sp),
+    headlineSmall = Typography.headlineSmall.copy(fontSize = (24 * scale).sp, lineHeight = (32 * scale).sp),
+    titleLarge = Typography.titleLarge.copy(fontSize = (22 * scale).sp, lineHeight = (28 * scale).sp),
+    titleMedium = Typography.titleMedium.copy(fontSize = (18 * scale).sp, lineHeight = (24 * scale).sp),
+    titleSmall = Typography.titleSmall.copy(fontSize = (16 * scale).sp, lineHeight = (22 * scale).sp),
+    bodyLarge = Typography.bodyLarge.copy(fontSize = (16 * scale).sp, lineHeight = (24 * scale).sp),
+    bodyMedium = Typography.bodyMedium.copy(fontSize = (14 * scale).sp, lineHeight = (20 * scale).sp),
+    bodySmall = Typography.bodySmall.copy(fontSize = (12 * scale).sp, lineHeight = (16 * scale).sp),
+    labelLarge = Typography.labelLarge.copy(fontSize = (14 * scale).sp, lineHeight = (20 * scale).sp),
+    labelMedium = Typography.labelMedium.copy(fontSize = (12 * scale).sp, lineHeight = (16 * scale).sp),
+    labelSmall = Typography.labelSmall.copy(fontSize = (11 * scale).sp, lineHeight = (16 * scale).sp)
+)

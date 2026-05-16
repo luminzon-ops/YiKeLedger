@@ -9,8 +9,11 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.yike.yikeledger.data.AppSettingsManager
 import com.yike.yikeledger.data.ThemeSetting
 
 private val DarkColorScheme = darkColorScheme(
@@ -77,9 +80,11 @@ fun YiKeLedgerTheme(
         else -> LightColorScheme
     }
 
+    val fontScale by AppSettingsManager.fontScale.collectAsState()
+
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = scaledTypography(fontScale),
         content = content
     )
 }

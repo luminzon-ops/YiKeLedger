@@ -21,18 +21,16 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val themeSetting: StateFlow<ThemeSetting> = ThemeManager.themeSetting
     val fontScale: StateFlow<Float> = AppSettingsManager.fontScale
     val currencyFormat: StateFlow<String> = AppSettingsManager.currencyFormat
+    val autoBackup: StateFlow<Boolean> = AppSettingsManager.autoBackup
+    val expenseNotify: StateFlow<Boolean> = AppSettingsManager.expenseNotify
+    val notifyTime: StateFlow<String> = AppSettingsManager.notifyTime
 
-    fun saveThemeSetting(themeSetting: ThemeSetting) {
-        ThemeManager.setThemeSetting(themeSetting)
-    }
-
-    fun setFontScale(scale: Float) {
-        AppSettingsManager.setFontScale(scale)
-    }
-
-    fun setCurrencyFormat(format: String) {
-        AppSettingsManager.setCurrencyFormat(format)
-    }
+    fun saveThemeSetting(s: ThemeSetting) = ThemeManager.setThemeSetting(s)
+    fun setFontScale(s: Float) = AppSettingsManager.setFontScale(s)
+    fun setCurrencyFormat(f: String) = AppSettingsManager.setCurrencyFormat(f)
+    fun setAutoBackup(e: Boolean) = AppSettingsManager.setAutoBackup(e)
+    fun setExpenseNotify(e: Boolean) = AppSettingsManager.setExpenseNotify(e)
+    fun setNotifyTime(t: String) = AppSettingsManager.setNotifyTime(t)
 
     fun getFontScaleDescription(): String {
         return FONT_SCALE_OPTIONS.find { it.scale == fontScale.value }?.title ?: "标准"
@@ -41,6 +39,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun getCurrencyFormatDescription(): String {
         return CURRENCY_OPTIONS.find { it.format == currencyFormat.value }?.title ?: "¥ 在前"
     }
+
+    fun getNotifyDescription(): String =
+        if (expenseNotify.value) notifyTime.value else "已关闭"
 
     fun getThemeDescription(): String {
         return when (themeSetting.value) {
@@ -75,8 +76,18 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             CurrencyOption("suffix", "¥ 在后", "100.00 ¥"),
             CurrencyOption("prefix_space", "¥ 在前（空格）", "¥ 100.00")
         )
+
+        val NOTIFY_TIME_OPTIONS = listOf(
+            NotifyTimeOption("每天 09:00", "每天 09:00"),
+            NotifyTimeOption("每天 12:00", "每天 12:00"),
+            NotifyTimeOption("每天 18:00", "每天 18:00"),
+            NotifyTimeOption("每天 20:00", "每天 20:00"),
+            NotifyTimeOption("每周一 09:00", "每周一 09:00"),
+            NotifyTimeOption("每月1日 09:00", "每月1日 09:00")
+        )
     }
 
+    data class NotifyTimeOption(val time: String, val title: String)
     data class ThemeOption(
         val setting: ThemeSetting,
         val title: String,
