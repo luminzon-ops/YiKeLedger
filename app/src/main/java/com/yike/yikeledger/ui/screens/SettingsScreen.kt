@@ -42,6 +42,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -311,6 +312,10 @@ fun SettingsScreen(
     val notificationsEnabled = remember { mutableStateOf(true) }
     val backupEnabled = remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
+    var showFontDialog by remember { mutableStateOf(false) }
+    var showCurrencyDialog by remember { mutableStateOf(false) }
+    val currentFontScale by settingsViewModel.fontScale.collectAsState()
+    val currentCurrencyFormat by settingsViewModel.currencyFormat.collectAsState()
 
     Box {
         Scaffold(
@@ -361,16 +366,16 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 SettingsInfoCard(
                     title = "字体大小",
-                    description = "调整应用字体大小",
+                    description = settingsViewModel.getFontScaleDescription(),
                     icon = Icons.Default.FormatSize,
-                    onClick = { /* 打开字体设置 */ }
+                    onClick = { showFontDialog = true }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 SettingsInfoCard(
                     title = "货币格式",
-                    description = "设置货币显示格式",
+                    description = settingsViewModel.getCurrencyFormatDescription(),
                     icon = Icons.Default.AttachMoney,
-                    onClick = { /* 打开货币格式设置 */ }
+                    onClick = { showCurrencyDialog = true }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -513,6 +518,98 @@ fun SettingsScreen(
                     }
                 }
             )
+        }
+
+        // 字体大小对话框
+        if (showFontDialog) {
+            AlertDialog(
+                onDismissRequest = { showFontDialog = false },
+                title = { Text("选择字体大小") },
+                text = {
+                    Column {
+                        SettingsViewModel.FONT_SCALE_OPTIONS.forEach { option ->
+                            val selected = currentFontScale == option.scale
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        settingsViewModel.setFontScale(option.scale)
+                                        showFontDialog = false
+                                    }
+                                    .padding(vertical = 12.dp, horizontal = 4.dp),
+                                color = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                    else MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = selected,
+                                        onClick = null
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Column {
+                                        Text(option.title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                                        Text(option.description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
+                                }
+                            }
+                            HorizontalDivider(modifier = Modifier.padding(horizontal = 4.dp))
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showFontDialog = false }) { Text("取消") }
+                }
+            )
+        }
+
+        // 货币格式对话框
+        if (showCurrencyDialog) {
+            AlertDialog(
+                onDismissRequest = { showCurrencyDialog = false },
+                title = { Text("选择货币格式") },
+                text = {
+                    Column {
+                        SettingsViewModel.CURRENCY_OPTIONS.forEach { option ->
+                            val selected = currentCurrencyFormat == option.format
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        settingsViewModel.setCurrencyFormat(option.format)
+                                        showCurrencyDialog = false
+                                    }
+                                    .padding(vertical = 12.dp, horizontal = 4.dp),
+                                color = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                    else MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = selected,
+                                        onClick = null
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Column {
+                                        Text(option.title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                                        Text(option.description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
+                                }
+                            }
+                            HorizontalDivider(modifier = Modifier.padding(horizontal = 4.dp))
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showCurrencyDialog = false }) { Text("取消") }
+                }
+            )
+        }
     }
-}
 }
