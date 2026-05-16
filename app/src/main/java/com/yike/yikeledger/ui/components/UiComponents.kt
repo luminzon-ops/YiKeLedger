@@ -14,6 +14,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,6 +62,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -91,50 +93,44 @@ import com.yike.yikeledger.R
 import androidx.compose.foundation.isSystemInDarkTheme
 import kotlin.ranges.ClosedRange
 
-// 渐变背景卡片 - 增强版：支持角度、形状、边框等自定义选项
+// 渐变背景卡片 - Box 实现，无 elevation 阴影
 @Composable
 fun GradientCard(
     modifier: Modifier = Modifier,
     gradientStart: Color = PrimaryGradientStart,
     gradientEnd: Color = PrimaryGradientEnd,
-    gradientAngle: Float = 45f, // 渐变角度（度）
+    gradientAngle: Float = 45f,
     shape: androidx.compose.foundation.shape.RoundedCornerShape = RoundedCornerShape(20.dp),
+    @Suppress("UNUSED_PARAMETER")
     elevation: androidx.compose.material3.CardElevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     borderWidth: androidx.compose.ui.unit.Dp = 0.dp,
     borderColor: androidx.compose.ui.graphics.Color = androidx.compose.ui.graphics.Color.Transparent,
     content: @Composable () -> Unit
 ) {
     val angleRad = gradientAngle * (Math.PI.toFloat() / 180f)
-    val startX = 0f
-    val startY = 0f
     val endX = kotlin.math.cos(angleRad) * 1000f
     val endY = kotlin.math.sin(angleRad) * 1000f
 
-    Card(
-        modifier = modifier,
-        shape = shape,
-        elevation = elevation,
-        colors = CardDefaults.cardColors(containerColor = androidx.compose.ui.graphics.Color.Transparent),
-        border = if (borderWidth > 0.dp) {
-            BorderStroke(borderWidth, borderColor)
-        } else {
-            null
-        }
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    brush = androidx.compose.ui.graphics.Brush.linearGradient(
-                        colors = listOf(gradientStart, gradientEnd),
-                        start = androidx.compose.ui.geometry.Offset(startX, startY),
-                        end = androidx.compose.ui.geometry.Offset(endX, endY)
-                    )
+    val borderMod = if (borderWidth > 0.dp) {
+        Modifier.border(BorderStroke(borderWidth, borderColor), shape)
+    } else {
+        Modifier
+    }
+
+    Box(
+        modifier = modifier
+            .then(borderMod)
+            .clip(shape)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(gradientStart, gradientEnd),
+                    start = Offset(0f, 0f),
+                    end = Offset(endX, endY)
                 )
-                .padding(20.dp)
-        ) {
-            content()
-        }
+            )
+            .padding(20.dp)
+    ) {
+        content()
     }
 }
 
