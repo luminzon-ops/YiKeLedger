@@ -38,10 +38,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
@@ -79,11 +82,12 @@ import com.yike.yikeledger.ui.components.StaggeredListItem
 @Composable
 fun TransactionListScreen(
     viewModel: TransactionViewModel = viewModel(),
-    onAddClick: () -> Unit,
+    onAddClick: (Offset) -> Unit = {},
     onEditTransaction: (Long) -> Unit
 ) {
     val transactions = viewModel.transactions.collectAsState().value
     val balance = viewModel.balance.collectAsState().value
+    val fabPosition = remember { mutableStateOf(Offset.Zero) }
     
     // 监听数据变化，实时刷新
     LaunchedEffect(Unit) {
@@ -124,13 +128,13 @@ fun TransactionListScreen(
                 ),
                 actions = {
                     IconButton(
-                        onClick = onAddClick,
+                        onClick = { onAddClick(Offset.Zero) },
                         modifier = Modifier
                             .clip(androidx.compose.foundation.shape.CircleShape),
                         enabled = !isLoading
                     ) {
                         Icon(
-                            Icons.Default.Add, 
+                            Icons.Default.Add,
                             contentDescription = "添加交易",
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -140,8 +144,13 @@ fun TransactionListScreen(
         floatingActionButton = {
             if (!isLoading) {
                 ModernFloatingActionButton(
-                    onClick = onAddClick,
+                    onClick = { onAddClick(fabPosition.value) },
                     icon = Icons.Default.Add,
+                    modifier = Modifier.onGloballyPositioned { coord ->
+                        val rootPos = coord.localToRoot(Offset.Zero)
+                        val size = coord.size
+                        fabPosition.value = Offset(rootPos.x + size.width / 2f, rootPos.y + size.height / 2f)
+                    },
                     contentDescription = "添加交易"
                 )
             }
@@ -346,7 +355,7 @@ fun TransactionListScreen(
                         description = "开始记录你的第一笔交易，跟踪个人财务状况",
                         icon = Icons.AutoMirrored.Filled.ArrowForward,
                         actionText = "添加交易",
-                        onAction = onAddClick,
+                        onAction = { onAddClick(Offset.Zero) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

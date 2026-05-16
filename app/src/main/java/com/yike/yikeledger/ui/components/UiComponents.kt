@@ -464,7 +464,8 @@ fun AccountCard(
 fun ModernFloatingActionButton(
     onClick: () -> Unit,
     icon: ImageVector = Icons.Default.Add,
-    contentDescription: String = "添加"
+    contentDescription: String = "添加",
+    modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -480,7 +481,7 @@ fun ModernFloatingActionButton(
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
         shape = CircleShape,
-        modifier = Modifier
+        modifier = modifier
             .scale(scale)
             .shadow(10.dp, shape = CircleShape)
             .size(60.dp)

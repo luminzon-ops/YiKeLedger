@@ -3,6 +3,8 @@ package com.yike.yikeledger.ui.screens
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -24,7 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.yike.yikeledger.ui.components.CircularRevealAnimation
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,7 +47,11 @@ fun MainScreen() {
     val currentRoute = navBackStackEntry?.destination?.route
     val tabRoutes = Tab.entries.map { it.route }.toSet()
 
-    Scaffold(
+    var revealOrigin by remember { mutableStateOf(Offset.Zero) }
+    var showAddOverlay by remember { mutableStateOf(false) }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
         bottomBar = {
             if (currentRoute in tabRoutes) {
                 NavigationBar(
@@ -123,8 +131,9 @@ fun MainScreen() {
         ) {
             composable(Tab.TRANSACTIONS.route) {
                 TransactionListScreen(
-                    onAddClick = {
-                        navController.navigate("add_transaction")
+                    onAddClick = { fabPos ->
+                        revealOrigin = fabPos
+                        showAddOverlay = true
                     },
                     onEditTransaction = { transactionId ->
                         navController.navigate("edit_transaction/$transactionId")
@@ -207,6 +216,19 @@ fun MainScreen() {
                     categoryId = categoryId,
                     onSave = { navController.popBackStack() },
                     onCancel = { navController.popBackStack() }
+                )
+            }
+        }
+    }
+
+        // 添加交易浮层 - 圆形揭示动画
+        if (showAddOverlay) {
+            CircularRevealAnimation(
+                visible = showAddOverlay,
+                origin = revealOrigin
+            ) {
+                AddTransactionScreen(
+                    onBack = { showAddOverlay = false }
                 )
             }
         }
