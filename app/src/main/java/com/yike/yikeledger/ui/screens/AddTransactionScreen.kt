@@ -266,7 +266,7 @@ fun AddTransactionScreen(
                 gradientAngle = 45f,
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
                 borderWidth = 1.dp,
-                borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+                borderColor = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
@@ -315,7 +315,7 @@ fun AddTransactionScreen(
                 gradientAngle = 90f,
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
                 borderWidth = 1.dp,
-                borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                borderColor = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
@@ -526,7 +526,7 @@ fun AddTransactionScreen(
                 gradientAngle = 270f,
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
                 borderWidth = 1.dp,
-                borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+                borderColor = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
