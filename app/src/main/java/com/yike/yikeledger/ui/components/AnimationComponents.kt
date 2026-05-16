@@ -1,8 +1,10 @@
 package com.yike.yikeledger.ui.components
 
 import androidx.annotation.RawRes
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -206,34 +208,35 @@ fun CircularRevealAnimation(
 ) {
     val density = LocalDensity.current
     val maxRadius = with(density) { 2000.dp.toPx() }
-    val radius by animateFloatAsState(
-        targetValue = if (visible) maxRadius else 0f,
-        animationSpec = tween(duration),
-        label = "circularReveal"
-    )
+    val radius = remember { Animatable(0f) }
 
-    if (radius > 0f) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .clipToBounds()
-                .drawWithContent {
-                    val path = Path().apply {
-                        addOval(
-                            Rect(
-                                origin.x - radius,
-                                origin.y - radius,
-                                origin.x + radius,
-                                origin.y + radius
-                            )
-                        )
-                    }
-                    clipPath(path) {
-                        this@drawWithContent.drawContent()
-                    }
-                }
-        ) {
-            content()
+    LaunchedEffect(visible) {
+        if (visible) {
+            radius.snapTo(0f)
+            radius.animateTo(maxRadius, animationSpec = tween(duration))
         }
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .clipToBounds()
+            .drawWithContent {
+                val path = Path().apply {
+                    addOval(
+                        Rect(
+                            origin.x - radius.value,
+                            origin.y - radius.value,
+                            origin.x + radius.value,
+                            origin.y + radius.value
+                        )
+                    )
+                }
+                clipPath(path) {
+                    this@drawWithContent.drawContent()
+                }
+            }
+    ) {
+        content()
     }
 }
