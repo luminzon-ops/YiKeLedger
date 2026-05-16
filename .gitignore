@@ -28,6 +28,9 @@ ruvector.db
 # IDE (fully excluded for this project)
 .idea/
 
+# Release APK artifacts
+YiKeLedger-v*.apk
+
 # Editor backup files
 *.bak
 *.current
