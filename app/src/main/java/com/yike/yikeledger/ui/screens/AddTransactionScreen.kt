@@ -264,7 +264,8 @@ fun AddTransactionScreen(
                 gradientStart = MaterialTheme.colorScheme.surfaceVariant,
                 gradientEnd = MaterialTheme.colorScheme.surface,
                 gradientAngle = 45f,
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
@@ -311,7 +312,8 @@ fun AddTransactionScreen(
                 gradientStart = MaterialTheme.colorScheme.primaryContainer,
                 gradientEnd = MaterialTheme.colorScheme.surface,
                 gradientAngle = 90f,
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
@@ -520,7 +522,8 @@ fun AddTransactionScreen(
                 gradientStart = MaterialTheme.colorScheme.tertiaryContainer,
                 gradientEnd = MaterialTheme.colorScheme.surface,
                 gradientAngle = 270f,
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
@@ -695,7 +698,8 @@ fun AddTransactionScreen(
                     gradientStart = MaterialTheme.colorScheme.secondaryContainer,
                     gradientEnd = MaterialTheme.colorScheme.surface,
                     gradientAngle = 90f,
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
