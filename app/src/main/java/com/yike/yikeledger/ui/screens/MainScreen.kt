@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,9 +39,14 @@ fun MainScreen() {
     val navController = rememberNavController()
     var selectedTab by remember { mutableStateOf(Tab.TRANSACTIONS) }
 
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val tabRoutes = Tab.entries.map { it.route }.toSet()
+
     Scaffold(
         bottomBar = {
-            NavigationBar(
+            if (currentRoute in tabRoutes) {
+                NavigationBar(
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 tonalElevation = 0.dp
@@ -101,6 +107,7 @@ fun MainScreen() {
                         )
                     )
                 }
+            }
             }
         }
     ) { innerPadding ->
