@@ -205,7 +205,7 @@ fun CircularRevealAnimation(
     visible: Boolean,
     origin: Offset,
     modifier: Modifier = Modifier,
-    duration: Int = 500,
+    duration: Int = 650,
     content: @Composable () -> Unit
 ) {
     val density = LocalDensity.current
@@ -222,7 +222,7 @@ fun CircularRevealAnimation(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF1A237E).copy(alpha = 0.06f))
+            .background(Color(0xFF1A237E).copy(alpha = 0.15f))
             .clipToBounds()
             .drawWithContent {
                 val path = Path().apply {
