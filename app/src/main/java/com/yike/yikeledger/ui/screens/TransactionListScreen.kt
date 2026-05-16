@@ -384,11 +384,11 @@ fun TransactionListScreen(
                             .fillMaxWidth()
                     ) {
                         ModernTransactionItem(
-                            title = transaction.description,
+                            title = transaction.category,
                             amount = transaction.amount,
                             type = if (transaction.type == TransactionType.INCOME) "income" else "expense",
                             date = transaction.dateTime,
-                            category = transaction.category,
+                            category = transaction.description,
                             description = "",
                             onClick = { onEditTransaction(transaction.id) }
                         )

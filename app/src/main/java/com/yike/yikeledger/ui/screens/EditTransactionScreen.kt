@@ -145,7 +145,7 @@ fun EditTransactionScreen(
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = { Text("描述") },
+                label = { Text("描述（可选）") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -288,7 +288,7 @@ fun EditTransactionScreen(
 
             Button(
                 onClick = {
-                    if (description.isNotBlank() && amountText.isNotBlank()) {
+                    if (amountText.isNotBlank()) {
                         val amount = amountText.toDoubleOrNull() ?: 0.0
                         if (amount > 0 && transactionId != null) {
                             viewModel.updateTransaction(transactionId, description, selectedType, selectedCategory, amount, selectedAccountId, dateTimeText)
@@ -301,7 +301,7 @@ fun EditTransactionScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = description.isNotBlank() && amountText.isNotBlank() && amountText.toDoubleOrNull() ?: 0.0 > 0 && transactionId != null
+                enabled = amountText.isNotBlank() && amountText.toDoubleOrNull() ?: 0.0 > 0 && transactionId != null
             ) {
                 Text("保存", style = MaterialTheme.typography.titleMedium)
             }

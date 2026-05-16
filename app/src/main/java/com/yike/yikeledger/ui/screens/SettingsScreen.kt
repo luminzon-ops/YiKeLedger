@@ -41,11 +41,14 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -66,7 +69,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import com.yike.yikeledger.ui.viewmodel.SettingsViewModel
 import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
 import com.yike.yikeledger.data.ThemeSetting
@@ -323,6 +329,18 @@ fun SettingsScreen(
     var showCurrencyDialog by remember { mutableStateOf(false) }
     var showNotifyDialog by remember { mutableStateOf(false) }
 
+    var exportCsvData by remember { mutableStateOf("") }
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("text/csv")
+    ) { uri: Uri? ->
+        uri?.let {
+            context.contentResolver.openOutputStream(it)?.use { out ->
+                out.write(exportCsvData.toByteArray())
+                Toast.makeText(context, "CSV已导出", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     Box {
         Scaffold(
             topBar = {
@@ -415,13 +433,8 @@ fun SettingsScreen(
                     description = "导出交易记录为CSV",
                     icon = Icons.Default.FileOpen,
                     onClick = {
-                        val csv = transactionViewModel.exportTransactionsAsCsv()
-                        val intent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/csv"
-                            putExtra(Intent.EXTRA_TEXT, csv)
-                            putExtra(Intent.EXTRA_SUBJECT, "一刻记账 - 交易记录导出")
-                        }
-                        context.startActivity(Intent.createChooser(intent, "分享CSV"))
+                        exportCsvData = transactionViewModel.exportTransactionsAsCsv()
+                        exportLauncher.launch("yi-ke-ledger-export.csv")
                     }
                 )
 
@@ -628,29 +641,67 @@ fun SettingsScreen(
 
         // 提醒时间对话框
         if (showNotifyDialog) {
-            var customTime by remember { mutableStateOf(notifyTime) }
+            var freq by remember { mutableStateOf("每天") }
+            var hour by remember { mutableStateOf("20") }
+            var minute by remember { mutableStateOf("00") }
+            var freqExpanded by remember { mutableStateOf(false) }
+            val freqOptions = listOf("每天", "每周", "每月")
+
             AlertDialog(
                 onDismissRequest = { showNotifyDialog = false },
-                title = { Text("自定义提醒时间") },
+                title = { Text("设置提醒时间") },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text("输入提醒时间，如: 每天 20:00, 每周五 18:00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        OutlinedTextField(
-                            value = customTime,
-                            onValueChange = { customTime = it },
-                            label = { Text("提醒时间") },
-                            placeholder = { Text("每天 20:00") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                            shape = RoundedCornerShape(12.dp)
-                        )
+                        ExposedDropdownMenuBox(
+                            expanded = freqExpanded,
+                            onExpandedChange = { freqExpanded = it }
+                        ) {
+                            OutlinedTextField(
+                                value = freq,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = freqExpanded) },
+                                label = { Text("频率") },
+                                modifier = Modifier.fillMaxWidth().menuAnchor(),
+                                singleLine = true,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            DropdownMenu(
+                                expanded = freqExpanded,
+                                onDismissRequest = { freqExpanded = false }
+                            ) {
+                                freqOptions.forEach { option ->
+                                    DropdownMenuItem(
+                                        text = { Text(option) },
+                                        onClick = { freq = option; freqExpanded = false }
+                                    )
+                                }
+                            }
+                        }
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedTextField(
+                                value = hour,
+                                onValueChange = { h -> if (h.length <= 2 && h.all { it.isDigit() }) hour = h },
+                                label = { Text("时") },
+                                modifier = Modifier.weight(1f),
+                                singleLine = true,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            Text(":", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top = 12.dp))
+                            OutlinedTextField(
+                                value = minute,
+                                onValueChange = { m -> if (m.length <= 2 && m.all { it.isDigit() }) minute = m },
+                                label = { Text("分") },
+                                modifier = Modifier.weight(1f),
+                                singleLine = true,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                        }
                     }
                 },
                 confirmButton = {
                     TextButton(onClick = {
-                        if (customTime.isNotBlank()) {
-                            settingsViewModel.setNotifyTime(customTime)
-                        }
+                        settingsViewModel.setNotifyTime("$freq ${hour.padStart(2, '0')}:${minute.padStart(2, '0')}")
                         showNotifyDialog = false
                     }) { Text("确定") }
                 },

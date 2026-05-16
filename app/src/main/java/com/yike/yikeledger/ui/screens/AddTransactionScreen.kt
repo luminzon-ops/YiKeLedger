@@ -125,8 +125,7 @@ fun AddTransactionScreen(
     var showDatePickerDialog by remember { mutableStateOf(false) }
 
     // 表单验证状态
-    val isFormValid = description.isNotBlank() && 
-                     amountText.isNotBlank() && 
+    val isFormValid = amountText.isNotBlank() &&
                      amountText.toDoubleOrNull() ?: 0.0 > 0 &&
                      selectedCategory.isNotBlank()
     
@@ -283,10 +282,8 @@ fun AddTransactionScreen(
                     ModernTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = "描述",
-                        modifier = Modifier.fillMaxWidth(),
-                        isError = description.isBlank() && description.isNotEmpty(),
-                        errorMessage = if (description.isBlank() && description.isNotEmpty()) "请输入交易描述" else null
+                        label = "描述（可选）",
+                        modifier = Modifier.fillMaxWidth()
                     )
                     
                     AmountInputField(
