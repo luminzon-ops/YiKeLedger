@@ -64,7 +64,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import android.content.Intent
+import android.widget.Toast
 import com.yike.yikeledger.ui.viewmodel.SettingsViewModel
+import com.yike.yikeledger.ui.viewmodel.TransactionViewModel
 import com.yike.yikeledger.data.ThemeSetting
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -301,21 +304,23 @@ fun SettingsInfoCard(
 fun SettingsScreen(
     navController: NavController
 ) {
-    // 获取SettingsViewModel
+    // 获取ViewModels
     val settingsViewModel: SettingsViewModel = viewModel()
+    val transactionViewModel: TransactionViewModel = viewModel()
     val context = LocalContext.current
-    
-    // 监听主题变化，确保UI在主题更改时重组
+
+    // 监听持久化状态
     val currentTheme by settingsViewModel.themeSetting.collectAsState()
-    
-    // 状态变量
-    val notificationsEnabled = remember { mutableStateOf(true) }
-    val backupEnabled = remember { mutableStateOf(false) }
+    val currentFontScale by settingsViewModel.fontScale.collectAsState()
+    val currentCurrencyFormat by settingsViewModel.currencyFormat.collectAsState()
+    val autoBackup by settingsViewModel.autoBackup.collectAsState()
+    val expenseNotify by settingsViewModel.expenseNotify.collectAsState()
+    val notifyTime by settingsViewModel.notifyTime.collectAsState()
+
     var showThemeDialog by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
     var showCurrencyDialog by remember { mutableStateOf(false) }
-    val currentFontScale by settingsViewModel.fontScale.collectAsState()
-    val currentCurrencyFormat by settingsViewModel.currencyFormat.collectAsState()
+    var showNotifyDialog by remember { mutableStateOf(false) }
 
     Box {
         Scaffold(
@@ -384,31 +389,39 @@ fun SettingsScreen(
                 SettingsGroupTitle(title = "数据管理")
                 SettingsSwitchCard(
                     title = "自动备份",
-                    description = "开启自动数据备份",
+                    description = if (autoBackup) "已开启" else "已关闭",
                     icon = Icons.Default.Backup,
-                    checked = backupEnabled.value,
-                    onCheckedChange = { newValue: Boolean -> backupEnabled.value = newValue }
+                    checked = autoBackup,
+                    onCheckedChange = { settingsViewModel.setAutoBackup(it) }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 SettingsItemCard(
                     title = "手动备份",
                     description = "立即备份数据到云端",
                     icon = Icons.Default.CloudUpload,
-                    onClick = { /* 执行备份 */ }
+                    onClick = { Toast.makeText(context, "此功能将在后续版本中实现", Toast.LENGTH_SHORT).show() }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 SettingsItemCard(
                     title = "恢复数据",
                     description = "从备份恢复数据",
                     icon = Icons.Default.CloudDownload,
-                    onClick = { /* 恢复数据 */ }
+                    onClick = { Toast.makeText(context, "此功能将在后续版本中实现", Toast.LENGTH_SHORT).show() }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 SettingsItemCard(
                     title = "导出数据",
-                    description = "导出数据为CSV/Excel",
+                    description = "导出交易记录为CSV",
                     icon = Icons.Default.FileOpen,
-                    onClick = { /* 导出数据 */ }
+                    onClick = {
+                        val csv = transactionViewModel.exportTransactionsAsCsv()
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/csv"
+                            putExtra(Intent.EXTRA_TEXT, csv)
+                            putExtra(Intent.EXTRA_SUBJECT, "一刻记账 - 交易记录导出")
+                        }
+                        context.startActivity(Intent.createChooser(intent, "分享CSV"))
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -417,17 +430,17 @@ fun SettingsScreen(
                 SettingsGroupTitle(title = "通知与提醒")
                 SettingsSwitchCard(
                     title = "消费提醒",
-                    description = "开启消费通知提醒",
+                    description = if (expenseNotify) "已开启" else "已关闭",
                     icon = Icons.Default.Notifications,
-                    checked = notificationsEnabled.value,
-                    onCheckedChange = { newValue: Boolean -> notificationsEnabled.value = newValue }
+                    checked = expenseNotify,
+                    onCheckedChange = { settingsViewModel.setExpenseNotify(it) }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 SettingsInfoCard(
                     title = "提醒设置",
-                    description = "自定义提醒时间和频率",
+                    description = settingsViewModel.getNotifyDescription(),
                     icon = Icons.Default.Settings,
-                    onClick = { /* 打开提醒设置 */ }
+                    onClick = { showNotifyDialog = true }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -609,6 +622,38 @@ fun SettingsScreen(
                 confirmButton = {
                     TextButton(onClick = { showCurrencyDialog = false }) { Text("取消") }
                 }
+            )
+        }
+
+        // 提醒时间对话框
+        if (showNotifyDialog) {
+            AlertDialog(
+                onDismissRequest = { showNotifyDialog = false },
+                title = { Text("选择提醒时间") },
+                text = {
+                    Column {
+                        SettingsViewModel.NOTIFY_TIME_OPTIONS.forEach { opt ->
+                            val sel = notifyTime == opt.time
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { settingsViewModel.setNotifyTime(opt.time); showNotifyDialog = false }
+                                    .padding(vertical = 12.dp, horizontal = 4.dp),
+                                color = if (sel) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                    else MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    RadioButton(selected = sel, onClick = null)
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(opt.title, style = MaterialTheme.typography.bodyLarge)
+                                }
+                            }
+                            HorizontalDivider(modifier = Modifier.padding(horizontal = 4.dp))
+                        }
+                    }
+                },
+                confirmButton = { TextButton(onClick = { showNotifyDialog = false }) { Text("取消") } }
             )
         }
     }

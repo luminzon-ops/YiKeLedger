@@ -65,7 +65,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     companion object {
         val FONT_SCALE_OPTIONS = listOf(
-            FontScaleOption(0.85f, "小", "紧凑显示更�?信息"),
+            FontScaleOption(0.85f, "小", "紧凑显示更多信息"),
             FontScaleOption(1.00f, "标准", "默认字体大小"),
             FontScaleOption(1.15f, "大", "稍微放大字体"),
             FontScaleOption(1.30f, "超大", "最大字体显示")
