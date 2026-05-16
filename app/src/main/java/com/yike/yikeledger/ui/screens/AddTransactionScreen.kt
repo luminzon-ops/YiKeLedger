@@ -61,6 +61,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.shadow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.BorderStroke
@@ -144,6 +145,7 @@ fun AddTransactionScreen(
     
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
+            containerColor = Color(0xFFF0F4FF),
             topBar = {
             MediumTopAppBar(
                 title = { 
@@ -261,7 +263,7 @@ fun AddTransactionScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                gradientStart = MaterialTheme.colorScheme.surfaceVariant,
+                gradientStart = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
                 gradientEnd = MaterialTheme.colorScheme.surface,
                 gradientAngle = 45f,
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),

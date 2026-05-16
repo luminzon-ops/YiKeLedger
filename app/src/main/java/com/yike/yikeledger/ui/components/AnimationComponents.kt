@@ -222,7 +222,6 @@ fun CircularRevealAnimation(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF1A237E).copy(alpha = 0.15f))
             .clipToBounds()
             .drawWithContent {
                 val path = Path().apply {
