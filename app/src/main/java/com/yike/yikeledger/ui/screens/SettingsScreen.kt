@@ -42,6 +42,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -429,7 +430,7 @@ fun SettingsScreen(
                 // 4. 通知设置分组
                 SettingsGroupTitle(title = "通知与提醒")
                 SettingsSwitchCard(
-                    title = "消费提醒",
+                    title = "记账提醒",
                     description = if (expenseNotify) "已开启" else "已关闭",
                     icon = Icons.Default.Notifications,
                     checked = expenseNotify,
@@ -627,33 +628,35 @@ fun SettingsScreen(
 
         // 提醒时间对话框
         if (showNotifyDialog) {
+            var customTime by remember { mutableStateOf(notifyTime) }
             AlertDialog(
                 onDismissRequest = { showNotifyDialog = false },
-                title = { Text("选择提醒时间") },
+                title = { Text("自定义提醒时间") },
                 text = {
-                    Column {
-                        SettingsViewModel.NOTIFY_TIME_OPTIONS.forEach { opt ->
-                            val sel = notifyTime == opt.time
-                            Surface(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { settingsViewModel.setNotifyTime(opt.time); showNotifyDialog = false }
-                                    .padding(vertical = 12.dp, horizontal = 4.dp),
-                                color = if (sel) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                                    else MaterialTheme.colorScheme.surface,
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                                    RadioButton(selected = sel, onClick = null)
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Text(opt.title, style = MaterialTheme.typography.bodyLarge)
-                                }
-                            }
-                            HorizontalDivider(modifier = Modifier.padding(horizontal = 4.dp))
-                        }
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text("输入提醒时间，如: 每天 20:00, 每周五 18:00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        OutlinedTextField(
+                            value = customTime,
+                            onValueChange = { customTime = it },
+                            label = { Text("提醒时间") },
+                            placeholder = { Text("每天 20:00") },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            shape = RoundedCornerShape(12.dp)
+                        )
                     }
                 },
-                confirmButton = { TextButton(onClick = { showNotifyDialog = false }) { Text("取消") } }
+                confirmButton = {
+                    TextButton(onClick = {
+                        if (customTime.isNotBlank()) {
+                            settingsViewModel.setNotifyTime(customTime)
+                        }
+                        showNotifyDialog = false
+                    }) { Text("确定") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showNotifyDialog = false }) { Text("取消") }
+                }
             )
         }
     }
